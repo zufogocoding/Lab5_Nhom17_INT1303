@@ -1,0 +1,67 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4096 (0x1000)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=VN, ST=HCM, L=HCM, O=PTIT, OU=PTIT, CN=ptit.com/emailAddress=ptit@gmail.com
+        Validity
+            Not Before: Apr 12 14:21:52 2026 GMT
+            Not After : Apr 12 14:21:52 2027 GMT
+        Subject: C=VN, ST=HCM, O=PTIT, OU=PTIT, CN=ptit.com/emailAddress=ptit@gmail.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:cc:5d:be:50:01:0b:65:de:91:1c:eb:33:7d:a1:
+                    8f:08:e4:39:c0:2a:e3:b6:09:55:17:57:0f:29:ba:
+                    4e:ee:e0:87:d8:71:6e:0a:2d:a8:c5:79:40:ea:4f:
+                    25:88:47:1a:0d:b8:05:7e:6d:f6:09:3a:40:f9:40:
+                    10:6e:10:0a:51:da:f5:2b:fa:b5:26:1a:f8:11:a0:
+                    a4:80:16:85:2b:27:53:4a:e7:fa:b3:e6:37:0e:12:
+                    8b:75:e9:6e:05:50:1c:4e:51:d1:48:8f:b9:68:e5:
+                    47:d6:28:28:dc:d6:23:70:8d:90:04:90:34:97:aa:
+                    3f:30:ba:66:a7:ba:0c:25:9d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                C1:F2:D3:7D:33:85:1A:59:E3:42:28:49:C8:B3:B4:50:BC:1C:6D:42
+            X509v3 Authority Key Identifier: 
+                B9:DB:26:4C:34:09:F7:4D:9E:F1:E6:1A:D0:17:8C:71:15:56:07:C5
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        5d:16:52:ce:29:81:82:eb:cc:9a:b2:8d:48:87:40:02:22:ff:
+        10:07:14:20:4b:44:31:90:51:f8:17:56:d2:f5:4c:a8:4c:32:
+        2d:11:51:78:27:72:89:4f:e0:ab:bc:fa:6e:37:89:ac:f3:fa:
+        6b:7c:e3:2c:9c:79:7d:0c:11:9d:a7:49:5f:03:2f:a1:b7:3a:
+        25:0f:dc:28:8a:8f:d7:0a:12:39:54:56:07:a3:ee:14:45:d5:
+        5c:52:68:1a:a0:71:17:24:c4:b5:35:63:9a:67:58:a9:40:bc:
+        c9:1f:e1:25:d0:7f:8f:b5:7f:07:ec:45:16:cc:cb:2b:5b:2f:
+        d4:63:41:ae:bf:b1:ad:a7:60:06:c2:fa:68:ff:9b:5e:ad:90:
+        87:73:c6:57:11:bb:0e:80:48:b2:bd:83:31:b1:ac:03:05:e2:
+        4c:4c:44:04:68:88:e9:04:b9:e2:2d:14:85:27:8c:7b:97:de:
+        b5:33:2b:ee:a9:36:47:94:be:ec:0c:64:84:39:2e:61:bf:7c:
+        c2:f2:7a:c5:34:e8:cc:11:78:ed:e4:55:95:c7:5e:4e:0c:87:
+        af:4d:cf:61:e9:47:5d:a2:ee:2b:89:a9:68:19:e0:0f:b3:89:
+        65:0b:66:6e:71:29:fc:0b:20:5f:c0:9f:8d:84:98:74:ce:d6:
+        37:d8:91:69
+-----BEGIN CERTIFICATE-----
+MIIDKTCCAhGgAwIBAgICEAAwDQYJKoZIhvcNAQELBQAweTELMAkGA1UEBhMCVk4x
+DDAKBgNVBAgMA0hDTTEMMAoGA1UEBwwDSENNMQ0wCwYDVQQKDARQVElUMQ0wCwYD
+VQQLDARQVElUMREwDwYDVQQDDAhwdGl0LmNvbTEdMBsGCSqGSIb3DQEJARYOcHRp
+dEBnbWFpbC5jb20wHhcNMjYwNDEyMTQyMTUyWhcNMjcwNDEyMTQyMTUyWjBrMQsw
+CQYDVQQGEwJWTjEMMAoGA1UECAwDSENNMQ0wCwYDVQQKDARQVElUMQ0wCwYDVQQL
+DARQVElUMREwDwYDVQQDDAhwdGl0LmNvbTEdMBsGCSqGSIb3DQEJARYOcHRpdEBn
+bWFpbC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMxdvlABC2XekRzr
+M32hjwjkOcAq47YJVRdXDym6Tu7gh9hxbgotqMV5QOpPJYhHGg24BX5t9gk6QPlA
+EG4QClHa9Sv6tSYa+BGgpIAWhSsnU0rn+rPmNw4Si3XpbgVQHE5R0UiPuWjlR9Yo
+KNzWI3CNkASQNJeqPzC6Zqe6DCWdAgMBAAGjTTBLMAkGA1UdEwQCMAAwHQYDVR0O
+BBYEFMHy030zhRpZ40IoSciztFC8HG1CMB8GA1UdIwQYMBaAFLnbJkw0CfdNnvHm
+GtAXjHEVVgfFMA0GCSqGSIb3DQEBCwUAA4IBAQBdFlLOKYGC68yaso1Ih0ACIv8Q
+BxQgS0QxkFH4F1bS9UyoTDItEVF4J3KJT+CrvPpuN4ms8/prfOMsnHl9DBGdp0lf
+Ay+htzolD9woio/XChI5VFYHo+4URdVcUmgaoHEXJMS1NWOaZ1ipQLzJH+El0H+P
+tX8H7EUWzMsrWy/UY0Guv7Gtp2AGwvpo/5terZCHc8ZXEbsOgEiyvYMxsawDBeJM
+TEQEaIjpBLniLRSFJ4x7l961MyvuqTZHlL7sDGSEOS5hv3zC8nrFNOjMEXjt5FWV
+x15ODIevTc9h6Uddou4rialoGeAPs4llC2ZucSn8CyBfwJ+NhJh0ztY32JFp
+-----END CERTIFICATE-----
