@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RSA Encryption — Crypto Toolkit</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0a0a0a;font-family:system-ui,-apple-system,sans-serif}
+    .app{display:flex;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#111}
+    .sidebar{width:200px;flex-shrink:0;background:#0d0d0d;border-right:1px solid #222;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+    .sb-logo{padding:24px 18px 18px;border-bottom:1px solid #1a1a1a}
+    .sb-logo-icon{width:32px;height:32px;background:#1a2a1a;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+    .sb-logo-icon svg{width:16px;height:16px}
+    .sb-title{font-size:14px;font-weight:600;color:#e8e8e8;line-height:1.3}
+    .sb-sub{font-size:11px;color:#444;margin-top:3px}
+    .sb-nav{padding:14px 10px;flex:1}
+    .sb-section{font-size:10px;color:#333;text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin-bottom:6px;margin-top:16px}
+    .sb-section:first-child{margin-top:0}
+    .sb-btn{width:100%;text-align:left;padding:9px 10px;border:none;background:none;border-radius:6px;font-size:12px;color:#555;cursor:pointer;display:flex;align-items:center;gap:9px;font-family:inherit;transition:all 0.15s}
+    .sb-btn svg{width:13px;height:13px;flex-shrink:0;stroke:currentColor}
+    .sb-btn:hover{background:#161616;color:#aaa}
+    .sb-btn.on{background:#0f1f0f;color:#4ade80}
+    .sb-footer{padding:14px 18px;border-top:1px solid #1a1a1a}
+    .sb-badge{font-size:10px;color:#2a2a2a;font-family:monospace}
+    .content{flex:1;padding:32px;overflow-y:auto;background:#111}
+    .panel{display:none}
+    .panel.on{display:block}
+    .panel-title{font-size:17px;font-weight:600;color:#e8e8e8;margin-bottom:4px}
+    .panel-desc{font-size:12px;color:#444;margin-bottom:24px;font-family:monospace}
+    .field-label{font-size:11px;color:#444;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;margin-top:18px}
+    .field-label:first-of-type{margin-top:0}
+    textarea,input[type=text]{width:100%;background:#0d0d0d;border:1px solid #222;border-radius:6px;color:#ccc;font-family:monospace;font-size:12px;padding:11px 13px;outline:none;resize:vertical;line-height:1.6;transition:border 0.15s}
+    textarea{min-height:82px}
+    textarea:focus,input[type=text]:focus{border-color:#1f3d1f}
+    textarea::placeholder,input::placeholder{color:#2a2a2a}
+    .seg{display:inline-flex;border:1px solid #222;border-radius:6px;overflow:hidden}
+    .seg-btn{padding:7px 16px;font-size:12px;background:none;border:none;border-right:1px solid #222;color:#444;cursor:pointer;font-family:inherit}
+    .seg-btn:last-child{border-right:none}
+    .seg-btn.on{background:#0f1f0f;color:#4ade80}
+    .seg-btn:hover:not(.on){background:#161616;color:#888}
+    .row{display:flex;gap:8px;margin-top:18px;align-items:center;flex-wrap:wrap}
+    .btn-main{padding:9px 18px;font-size:12px;font-family:inherit;background:#4ade80;color:#0a0a0a;border:none;border-radius:6px;cursor:pointer;font-weight:600;transition:background 0.15s}
+    .btn-main:hover{background:#86efac}
+    .btn-main:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-ghost{padding:9px 13px;font-size:12px;font-family:inherit;background:none;border:1px solid #222;border-radius:6px;color:#444;cursor:pointer;transition:all 0.15s}
+    .btn-ghost:hover{border-color:#333;color:#888}
+    .status{font-size:11px;font-family:monospace}
+    .status.ok{color:#4ade80}
+    .status.err{color:#f87171}
+    .status.info{color:#60a5fa}
+    .out{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:6px;padding:14px;margin-top:16px;display:none}
+    .out.show{display:block}
+    .out-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .out-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#333;font-family:inherit}
+    .out-text{font-family:monospace;font-size:11px;color:#4ade80;word-break:break-all;white-space:pre-wrap;line-height:1.75;max-height:140px;overflow-y:auto}
+    .key-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    @media(max-width:640px){
+      .app{flex-direction:column}
+      .sidebar{width:100%;height:auto;position:static}
+      .sb-nav{display:flex;gap:4px;padding:8px}
+      .sb-btn{flex-direction:column;gap:4px;padding:8px;font-size:11px;text-align:center}
+      .sb-section,.sb-footer{display:none}
+      .key-row{grid-template-columns:1fr}
+      .content{padding:20px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <div class="sb-title">RSA Tool</div>
+      <div class="sb-sub">Asymmetric encryption</div>
+    </div>
+
+    <div class="sb-nav">
+      <div class="sb-section">Functions</div>
+
+      <button class="sb-btn on" data-p="keygen">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="15" r="4"/>
+          <path d="m15 7-4 4m4-4 4 4m-4-4-4-4"/>
+        </svg>
+        Key Generation
+      </button>
+
+      <button class="sb-btn" data-p="encrypt">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Encrypt
+      </button>
+
+      <button class="sb-btn" data-p="decrypt">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 5-5"/>
+        </svg>
+        Decrypt
+      </button>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-badge">Feature 02 — RSA</div>
+      <div class="sb-badge" style="margin-top:4px">Library: forge.js</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- KEY GENERATION -->
+    <div class="panel on" id="p-keygen">
+      <div class="panel-title">Key Generation</div>
+      <div class="panel-desc">Generate a RSA public / private key pair</div>
+
+      <div class="field-label">Key size (bits)</div>
+      <div class="seg">
+        <button class="seg-btn" data-s="1024">1024</button>
+        <button class="seg-btn on" data-s="2048">2048</button>
+        <button class="seg-btn" data-s="4096">4096</button>
+      </div>
+
+      <div class="row">
+        <button class="btn-main" id="btn-gen">Generate key pair</button>
+        <span class="status" id="st-gen"></span>
+      </div>
+
+      <div class="key-row" id="key-out" style="display:none">
+        <div class="out show">
+          <div class="out-header">
+            <span class="out-label">Public Key</span>
+            <button class="btn-ghost" style="padding:4px 10px;font-size:11px" id="cp-pub">Copy</button>
+          </div>
+          <div class="out-text" id="txt-pub"></div>
+        </div>
+        <div class="out show">
+          <div class="out-header">
+            <span class="out-label">Private Key</span>
+            <button class="btn-ghost" style="padding:4px 10px;font-size:11px" id="cp-priv">Copy</button>
+          </div>
+          <div class="out-text" id="txt-priv"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENCRYPT -->
+    <div class="panel" id="p-encrypt">
+      <div class="panel-title">Encrypt</div>
+      <div class="panel-desc">Plaintext + Public Key → Ciphertext</div>
+
+      <div class="field-label">Plaintext</div>
+      <textarea id="enc-plain" placeholder="Enter the message to encrypt..."></textarea>
+
+      <div class="field-label">Public Key (PEM format)</div>
+      <textarea id="enc-key" style="min-height:110px" placeholder="-----BEGIN PUBLIC KEY-----
+...
+-----END PUBLIC KEY-----"></textarea>
+
+      <div class="row">
+        <button class="btn-main" id="btn-enc">Encrypt</button>
+        <button class="btn-ghost" id="clr-enc">Clear</button>
+        <span class="status" id="st-enc"></span>
+      </div>
+
+      <div class="out" id="out-enc">
+        <div class="out-header">
+          <span class="out-label">Ciphertext (Base64)</span>
+          <button class="btn-ghost" style="padding:4px 10px;font-size:11px" id="cp-enc">Copy</button>
+        </div>
+        <div class="out-text" id="txt-enc"></div>
+      </div>
+    </div>
+
+    <!-- DECRYPT -->
+    <div class="panel" id="p-decrypt">
+      <div class="panel-title">Decrypt</div>
+      <div class="panel-desc">Ciphertext + Private Key → Plaintext</div>
+
+      <div class="field-label">Ciphertext (Base64)</div>
+      <textarea id="dec-cipher" placeholder="Paste Base64-encoded ciphertext here..."></textarea>
+
+      <div class="field-label">Private Key (PEM format)</div>
+      <textarea id="dec-key" style="min-height:110px" placeholder="-----BEGIN RSA PRIVATE KEY-----
+...
+-----END RSA PRIVATE KEY-----"></textarea>
+
+      <div class="row">
+        <button class="btn-main" id="btn-dec">Decrypt</button>
+        <button class="btn-ghost" id="clr-dec">Clear</button>
+        <span class="status" id="st-dec"></span>
+      </div>
+
+      <div class="out" id="out-dec">
+        <div class="out-header">
+          <span class="out-label">Plaintext</span>
+          <button class="btn-ghost" style="padding:4px 10px;font-size:11px" id="cp-dec">Copy</button>
+        </div>
+        <div class="out-text" id="txt-dec"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js"></script>
+<script>
+  let keySize = 2048;
+
+  // ── Navigation ──────────────────────────────────────────
+  document.querySelectorAll('.sb-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.sb-btn').forEach(x => x.classList.remove('on'));
+      document.querySelectorAll('.panel').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('p-' + b.dataset.p).classList.add('on');
+    });
+  });
+
+  // ── Key size selector ───────────────────────────────────
+  document.querySelectorAll('.seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.seg-btn').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      keySize = parseInt(b.dataset.s);
+    });
+  });
+
+  // ── Helpers ─────────────────────────────────────────────
+  function setStatus(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status ' + (type || '');
+  }
+
+  function setupCopy(btnId, txtId) {
+    document.getElementById(btnId).addEventListener('click', () => {
+      const text = document.getElementById(txtId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById(btnId);
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = orig, 1500);
+      });
+    });
+  }
+
+  setupCopy('cp-pub',  'txt-pub');
+  setupCopy('cp-priv', 'txt-priv');
+  setupCopy('cp-enc',  'txt-enc');
+  setupCopy('cp-dec',  'txt-dec');
+
+  // ── Key Generation ──────────────────────────────────────
+  document.getElementById('btn-gen').addEventListener('click', () => {
+    const btn = document.getElementById('btn-gen');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    setStatus('st-gen', 'Working...', 'info');
+
+    setTimeout(() => {
+      try {
+        const keypair = forge.pki.rsa.generateKeyPair({ bits: keySize, e: 0x10001 });
+        document.getElementById('txt-pub').textContent  = forge.pki.publicKeyToPem(keypair.publicKey);
+        document.getElementById('txt-priv').textContent = forge.pki.privateKeyToPem(keypair.privateKey);
+        document.getElementById('key-out').style.display = 'grid';
+        setStatus('st-gen', keySize + '-bit key pair generated', 'ok');
+      } catch (err) {
+        setStatus('st-gen', 'Error: ' + err.message, 'err');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Generate key pair';
+    }, 30);
+  });
+
+  // ── Encrypt ─────────────────────────────────────────────
+  document.getElementById('btn-enc').addEventListener('click', () => {
+    const plaintext = document.getElementById('enc-plain').value.trim();
+    const pubPem    = document.getElementById('enc-key').value.trim();
+
+    if (!plaintext || !pubPem) {
+      setStatus('st-enc', 'Please fill in both fields', 'err');
+      return;
+    }
+    try {
+      const publicKey  = forge.pki.publicKeyFromPem(pubPem);
+      const encrypted  = publicKey.encrypt(forge.util.encodeUtf8(plaintext), 'RSA-OAEP');
+      const ciphertext = forge.util.encode64(encrypted);
+
+      document.getElementById('txt-enc').textContent = ciphertext;
+      document.getElementById('out-enc').classList.add('show');
+      setStatus('st-enc', 'Encrypted successfully', 'ok');
+    } catch (err) {
+      setStatus('st-enc', 'Error: ' + err.message, 'err');
+    }
+  });
+
+  document.getElementById('clr-enc').addEventListener('click', () => {
+    document.getElementById('enc-plain').value = '';
+    document.getElementById('enc-key').value   = '';
+    document.getElementById('out-enc').classList.remove('show');
+    setStatus('st-enc', '', '');
+  });
+
+  // ── Decrypt ─────────────────────────────────────────────
+  document.getElementById('btn-dec').addEventListener('click', () => {
+    const cipherB64 = document.getElementById('dec-cipher').value.trim();
+    const privPem   = document.getElementById('dec-key').value.trim();
+
+    if (!cipherB64 || !privPem) {
+      setStatus('st-dec', 'Please fill in both fields', 'err');
+      return;
+    }
+    try {
+      const privateKey = forge.pki.privateKeyFromPem(privPem);
+      const decrypted  = privateKey.decrypt(forge.util.decode64(cipherB64), 'RSA-OAEP');
+      const plaintext  = forge.util.decodeUtf8(decrypted);
+
+      document.getElementById('txt-dec').textContent = plaintext;
+      document.getElementById('out-dec').classList.add('show');
+      setStatus('st-dec', 'Decrypted successfully', 'ok');
+    } catch (err) {
+      setStatus('st-dec', 'Error: ' + err.message, 'err');
+    }
+  });
+
+  document.getElementById('clr-dec').addEventListener('click', () => {
+    document.getElementById('dec-cipher').value = '';
+    document.getElementById('dec-key').value    = '';
+    document.getElementById('out-dec').classList.remove('show');
+    setStatus('st-dec', '', '');
+  });
+</script>
+</body>
+</html>
