@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cryptography Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js"></script>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="wrap">
+  <header>
+    <div class="logo-row">
+      <span class="logo-icon">🔐</span>
+      <h1>CRYPTOGRAPHY TOOLKIT</h1>
+    </div>
+    <p class="subtitle">Symmetric · Asymmetric · Hash Functions</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('sym')">
+      <span class="tab-icon">🔑</span>
+      <span class="tab-label">Symmetric</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('asym')">
+      <span class="tab-icon">🗝️</span>
+      <span class="tab-label">Asymmetric</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('hash')">
+      <span class="tab-icon">#</span>
+      <span class="tab-label">Hash Functions</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════ PANEL 1: SYMMETRIC ═══════════════════════════ -->
+  <div id="panel-sym" class="panel active">
+    <div class="section-title">01 // SYMMETRIC ENCRYPTION</div>
+
+    <!-- ALGO SELECT -->
+    <div class="card">
+      <label>Select Algorithm</label>
+      <div class="algo-row" id="sym-algos">
+        <button class="algo-btn active" onclick="selectSymAlgo(this, 'DES')">DES</button>
+        <button class="algo-btn" onclick="selectSymAlgo(this, '3DES')">3DES</button>
+        <button class="algo-btn" onclick="selectSymAlgo(this, 'AES')">AES</button>
+      </div>
+
+      <label style="margin-top:14px;">Mode of Operation</label>
+      <div class="algo-row" id="sym-modes">
+        <button class="algo-btn active" onclick="selectSymMode(this, 'CBC')">CBC</button>
+        <button class="algo-btn" onclick="selectSymMode(this, 'ECB')">ECB</button>
+        <button class="algo-btn" onclick="selectSymMode(this, 'CFB')">CFB</button>
+        <button class="algo-btn" onclick="selectSymMode(this, 'OFB')">OFB</button>
+      </div>
+
+      <div id="sym-key-info" class="help-text" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- ENC/DEC TOGGLE -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setSymMode(this, 'encrypt')">⬆ Encrypt</button>
+      <button class="mode-btn" onclick="setSymMode(this, 'decrypt')">⬇ Decrypt</button>
+    </div>
+
+    <div class="card">
+      <!-- PLAINTEXT / CIPHERTEXT INPUT -->
+      <div class="field-group">
+        <label id="sym-input-label">Plaintext <span class="req">*</span></label>
+        <textarea id="sym-input" placeholder="Enter text to encrypt..."></textarea>
+      </div>
+
+      <!-- KEY INPUT -->
+      <div class="field-group">
+        <label>Secret Key <span class="req">*</span>
+          <span class="info-badge" id="sym-key-badge">DES: 8 bytes</span>
+        </label>
+        <div class="key-row">
+          <input type="text" id="sym-key" placeholder="Enter key or generate one...">
+          <button class="btn btn-sm" onclick="generateSymKey()">⚡ Generate</button>
+        </div>
+        <p class="help-text" id="sym-key-hint">For DES, key is padded/truncated to 8 bytes.</p>
+      </div>
+
+      <!-- IV (hidden for ECB) -->
+      <div class="field-group" id="sym-iv-row">
+        <label>Initialization Vector (IV)
+          <span style="color:var(--text-dim); font-size:9px;">&nbsp;— auto-generated if empty</span>
+        </label>
+        <div class="key-row">
+          <input type="text" id="sym-iv" placeholder="Leave blank to auto-generate IV...">
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('sym-iv').value=''">Clear</button>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-green" id="sym-run-btn" onclick="runSymmetric()">▶ Run</button>
+        <button class="btn btn-ghost" onclick="clearSym()">↺ Clear</button>
+      </div>
+
+      <div id="sym-result" class="result-box" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ PANEL 2: ASYMMETRIC ═══════════════════════════ -->
+  <div id="panel-asym" class="panel">
+    <div class="section-title">02 // ASYMMETRIC ENCRYPTION (RSA)</div>
+
+    <!-- KEY GENERATION -->
+    <div class="card">
+      <div class="section-title" style="font-size:11px; color:var(--neon2);">KEY GENERATION</div>
+
+      <div class="field-group" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <label style="margin:0;">Key Size:</label>
+        <select id="rsa-keysize" style="width:auto; padding:8px 40px 8px 12px;">
+          <option value="1024">1024-bit</option>
+          <option value="2048" selected>2048-bit</option>
+        </select>
+        <button class="btn btn-green" id="rsa-gen-btn" onclick="generateRSAKeys()">⚡ Generate Key Pair</button>
+        <span id="rsa-gen-status"></span>
+      </div>
+
+      <div class="two-col" style="margin-top:16px;">
+        <div>
+          <label>Public Key (PEM)</label>
+          <div class="key-display" id="rsa-pub-key">— not yet generated —</div>
+          <button class="btn btn-sm btn-ghost" style="margin-top:8px;" onclick="copyText('rsa-pub-key')">⎘ Copy</button>
+        </div>
+        <div>
+          <label>Private Key (PEM)</label>
+          <div class="key-display" id="rsa-priv-key">— not yet generated —</div>
+          <button class="btn btn-sm btn-ghost" style="margin-top:8px;" onclick="copyText('rsa-priv-key')">⎘ Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSA ENC/DEC -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setAsymMode(this, 'encrypt')">⬆ Encrypt</button>
+      <button class="mode-btn" onclick="setAsymMode(this, 'decrypt')">⬇ Decrypt</button>
+    </div>
+
+    <div class="card">
+      <div class="field-group">
+        <label id="rsa-input-label">Plaintext <span class="req">*</span></label>
+        <textarea id="rsa-input" placeholder="Enter text to encrypt..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label id="rsa-key-label">Public Key (PEM) <span class="req">*</span>
+          <span style="color:var(--text-dim); font-size:9px;">&nbsp;— paste or use generated key above</span>
+        </label>
+        <textarea id="rsa-key-input" style="min-height:100px; font-size:11px;" placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"></textarea>
+        <button class="btn btn-sm btn-ghost" style="margin-top:6px;" onclick="pasteGeneratedKey()">⬇ Use Generated Key</button>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-green" onclick="runRSA()">▶ Run</button>
+        <button class="btn btn-ghost" onclick="clearRSA()">↺ Clear</button>
+      </div>
+
+      <div id="rsa-result" class="result-box" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ PANEL 3: HASH ═══════════════════════════ -->
+  <div id="panel-hash" class="panel">
+    <div class="section-title">03 // HASH FUNCTIONS</div>
+
+    <div class="card">
+      <label>Select Algorithm</label>
+      <div class="algo-row" id="hash-algos">
+        <button class="algo-btn active" onclick="selectHashAlgo(this, 'MD5')">MD5</button>
+        <button class="algo-btn" onclick="selectHashAlgo(this, 'SHA256')">SHA-256</button>
+        <button class="algo-btn" onclick="selectHashAlgo(this, 'SHA512')">SHA-512</button>
+        <button class="algo-btn" onclick="selectHashAlgo(this, 'SHA1')">SHA-1</button>
+        <button class="algo-btn" onclick="selectHashAlgo(this, 'RIPEMD160')">RIPEMD-160</button>
+      </div>
+
+      <div class="field-group" style="margin-top:16px;">
+        <label>Input Text <span class="req">*</span></label>
+        <textarea id="hash-input" placeholder="Enter any text to hash..." style="min-height:100px;"></textarea>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-green" onclick="runHash()">⟳ Compute Hash</button>
+        <button class="btn btn-ghost" onclick="clearHash()">↺ Clear</button>
+      </div>
+
+      <div id="hash-result" class="result-box" style="display:none;"></div>
+    </div>
+
+    <!-- HASH COMPARISON -->
+    <div class="card">
+      <div class="section-title" style="font-size:11px; color:var(--neon2);">MULTI-ALGO COMPARISON</div>
+      <div class="field-group">
+        <label>Input Text for All Algorithms</label>
+        <input type="text" id="hash-compare-input" placeholder="Type something to compare all hash outputs...">
+      </div>
+      <button class="btn btn-green" onclick="runHashCompare()">⊞ Compare All</button>
+      <div id="hash-compare-result" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COPY FEEDBACK TOAST -->
+<div class="copy-feedback" id="copy-toast">✓ Copied to clipboard</div>
+<script src="./main.js"></script>
+</body>
+</html>
